@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="ابحث عن تفسير القرآن الكريم بسهولة.">
+    <title>النبأ العظيم</title>
+    
+    <!-- Google Fonts - Cairo for Arabic text -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <!-- JSON-LD Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "url": "https://your-domain.com/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://your-domain.com/?sura={sura}&aya={aya}",
+        "query-input": "required name=sura, required name=aya"
+      }
+    }
+    </script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1 class="site-title">النبأ العظيم</h1>
+            <p class="site-subtitle">موقع شامل للقرآن الكريم وعلومه</p>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="main-nav">
+        <div class="container">
+            <div class="nav-tabs">
+                <button class="nav-tab active" data-tab="search">ابحث في القرآن الكريم</button>
+                <button class="nav-tab" data-tab="tafsir">التفسير في القرآن الكريم</button>
+                <button class="nav-tab" data-tab="sciences">العلوم في القرآن الكريم</button>
+                <button class="nav-tab" data-tab="mushafs">المصاحف في القرآن الكريم</button>
+                <button class="nav-tab" data-tab="language">اللغة في القرآن الكريم</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 النبأ العظيم - موقع شامل للقرآن الكريم وعلومه</p>
+        </div>
+    </footer>
+
+    <!-- Tab Navigation Script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabs = document.querySelectorAll('.nav-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const targetTab = this.dataset.tab;
+                
+                // Remove active class from all tabs
+                tabs.forEach(t => t.classList.remove('active'));
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Hide all tab contents
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Show target tab content
+                const targetContent = document.getElementById(targetTab + '-content');
+                if (targetContent) {
+                    targetContent.classList.add('active');
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>

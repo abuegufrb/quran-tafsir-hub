@@ -1,0 +1,109 @@
+Hello Replit AI Assistant,
+
+I need you to enhance and refine the existing Quran search interface in this project (“QuranTafsirHub”). Your task is to transform the simple search box into a robust, accurate, user-friendly Quran search engine that meets the following detailed requirements:
+
+
+---
+
+1. Search Input Behavior and Accuracy
+
+Implement a single search field that accepts:
+
+Surah number (1–114)
+
+Ayah number
+
+Full or partial Arabic or English text from the Quran
+
+Surah name in Arabic or English
+
+
+As soon as the user starts typing, display an autocomplete dropdown with relevant suggestions:
+
+Surah names matching the input
+
+Ayah references when the user enters “2:” or “Al-Baqarah:” etc.
+
+Quranic phrases or words appearing in the first 20 matches
+
+
+Ensure the search logic handles diacritics and common spelling variations in Arabic, and is case-insensitive for English.
+
+
+2. Query Processing and Result Ranking
+
+On submission or selection from autocomplete, query your internal data structure (verses_db) in this order:
+
+1. Exact Surah and Ayah reference
+
+
+2. Full-text match in Ayah text
+
+
+3. Full-text match in Ayah’s tafsir text
+
+
+4. Partial keyword match anywhere in the text or tafsir
+
+
+
+Return up to 25 results, sorted by:
+
+1. Exact reference match
+
+
+2. Number of keyword occurrences
+
+
+3. Surah ascending (for equal scores)
+
+
+
+
+3. Interface and Display
+
+Keep the RTL Arabic layout and “Cairo” font.
+
+Place the search box prominently at top, with a clean “search-container” card.
+
+Under the search box, display results in responsive cards showing:
+
+Surah name (Arabic + English), Ayah number
+
+The Arabic verse text (with proper Uthmani script)
+
+The tafsir paragraph (truncate at 200 characters with “…read more” link)
+
+
+Highlight the search terms in both verse text and tafsir.
+
+Include pagination controls (“Next” / “Previous”) if more results are available.
+
+
+4. Performance and Accessibility
+
+Ensure autocomplete queries respond within 100 ms.
+
+Debounce input by 250 ms to reduce unnecessary queries.
+
+Make all interactive elements keyboard-navigable and screen-reader friendly (ARIA labels, appropriate roles).
+
+
+5. Mobile Responsiveness
+
+On screens under 600px, make the search box full width, and stack result elements vertically.
+
+Ensure touch targets are at least 44 × 44 px.
+
+
+6. Error Handling and User Feedback
+
+If no results, display: “عفواً، لم نعثر على أي نتائج. حاول كلمات أو مرجع آخر.”
+
+If input is invalid (e.g. “120:5”), show inline validation: “رقم السورة يجب أن يكون بين 1 و114.”
+
+
+
+---
+
+Please implement these enhancements precisely, update all relevant templates, JavaScript, and styles in templates/index.html, static/style.css, and any client-side scripts. Once you’ve completed the changes, confirm “Search interface fully enhanced and tested.” Thank you!

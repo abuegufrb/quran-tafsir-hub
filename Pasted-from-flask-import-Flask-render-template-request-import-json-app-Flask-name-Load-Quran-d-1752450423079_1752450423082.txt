@@ -1,0 +1,78 @@
+from flask import Flask, render_template, request
+import json
+
+app = Flask(__name__)
+
+# Load Quran data (sample only includes few surahs for now)
+with open('quran.json', 'r', encoding='utf-8') as f:
+    quran_data = json.load(f)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/search')
+def search():
+    query = request.args.get('q', '').strip()
+    results = []
+    for surah in quran_data:
+        for verse in surah['verses']:
+            if query in verse['text']:
+                results.append({
+                    'surah_name': surah['name'],
+                    'ayah_number': verse['number'],
+                    'ayah_text': verse['text'],
+                    'surah_id': surah['id']
+                })
+    return render_template('search.html', results=results, query=query)
+
+@app.route('/surah/<int:surah_id>')
+def show_surah(surah_id):
+    surah = next((s for s in quran_data if s['id'] == surah_id), None)
+    if not surah:
+        return "Surah not found", 404
+    return render_template('surah.html', surah=surah)
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ surah.name }}</title>
+</head>
+<body>
+  <h2>سورة {{ surah.name }}</h2>
+  <ul>
+    {% for verse in surah.verses %}
+      <li><strong>{{ verse.number }}</strong> - {{ verse.text }}</li>
+    {% endfor %}
+  </ul>
+  <a href="/">العودة إلى البحث</a>
+</body>
+</html>
+
+
+
+Please implement the following update:
+
+1. In the first search tab ("ابحث في القرآن الكريم"), when the user searches:
+   - Only show ayahs (verses) that match the query.
+   - DO NOT show any Tafsir (interpretation) here.
+   - Each result should include:
+     • Ayah text
+     • Surah name
+     • Ayah number
+     • A clickable link to view the full Surah
+
+2. When a user clicks on a verse:
+   - Redirect to a separate page showing the full Surah.
+   - The full Surah page should display:
+     • All ayahs of the Surah
+     • Without Tafsir or any additional text
+   - Arabic formatting (right-to-left) is required.
+   - Add a "Back to search" link at the bottom.
+
+Keep this logic ONLY for the first search section.
+Other sections can include Tafsir later.
+
+Use Flask and Jinja2 templates to implement this.
+Make sure the Quran data is cleanly structured by Surah and Ayah in the JSON file.

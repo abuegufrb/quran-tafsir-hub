@@ -1,0 +1,81 @@
+Hello Replit AI Assistant,
+
+I need you to fully build the Quran Tafsir application under this Replit project (“QuranTafsirHub”) using Python and Flask. Follow every step precisely and implement everything from A to Z, without ambiguity or deviation.
+
+Project structure:
+/
+ ├── main.py
+ ├── requirements.txt
+ ├── templates/
+ │ ├── layout.html
+ │ └── index.html
+ └── static/
+       └── style.css
+
+1. In main.py:
+   - Use Flask with one route “/” handling GET and POST.
+   - On GET: render index.html with no variables.
+   - On POST: read sura and aya from form, validate sura is between 1–114 and aya ≥1.
+     If invalid input, set tafsir = "Invalid sura or aya."
+     Else call Quran.com v4 API:
+     `https://api.quran.com/api/v4/verses/by_key/{sura}:{aya}?language=ar&tafsir_translations=131`
+     Extract tafsir text using JSON path verse.tafsir.text.
+     If error or network failure, set tafsir = "عذراً، فشل جلب التفسير. يرجى المحاولة لاحقاً."
+   - Render index.html passing sura, aya, and tafsir variables.
+
+2. In templates/layout.html:
+   - Use `<html lang="ar" dir="rtl">`.
+   - Load meta charset UTF-8 and meta viewport.
+   - Add link to Google Font “Cairo”.
+   - Link `static/style.css`.
+   - Include nav bar with site title and two links: “الرئيسية” and “عن الموقع”.
+   - Include Jinja2 block: `{% block content %}{% endblock %}` within `<main class="container">`.
+   - Add footer at bottom: `© 2025 تفسير القرآن`.
+
+3. In templates/index.html:
+   - Extend layout.html with `{% extends "layout.html" %}`.
+   - Within `{% block content %}`:
+     - Form for method POST, with two number inputs (sura, aya) and submit button.
+     - If tafsir exists (Jinja2 condition), show a `.result-card` containing the heading and tafsir paragraph.
+
+4. In static/style.css:
+   - Light, calm styling: background #f5f5f5, container width up to 800px centered.
+   - Navbar with white background, subtle shadow, flex layout.
+   - Form inputs and button styled with padding, margins, border-radius.
+   - Button: blue (#007BFF), white text, hover darker blue (#0056b3).
+   - `.result-card`: white card with padding, shadow, rounded corners.
+   - Responsive: at widths <600px, form inputs stack at 100% width.
+
+5. For SEO & Google Autocomplete:
+   - In layout.html head, include JSON-LD structured data for WebSite SearchAction:
+     ```
+     {
+       "@context": "https://schema.org",
+       "@type": "WebSite",
+       "url": "https://your-domain.com/",
+       "potentialAction": {
+         "@type": "SearchAction",
+         "target": "https://your-domain.com/?sura={sura}&aya={aya}",
+         "query-input": "required name=sura, required name=aya"
+       }
+     }
+     ```
+   - Include `<meta name="description" content="ابحث عن تفسير القرآن الكريم بسهولة.">`.
+
+6. Create `requirements.txt`:
+
+
+
+
+7. After writing all files, install Flask and requests via Packages tab.
+
+8. Run the project and test:
+- Valid input (e.g., 1/1) → should show correct tafsir.
+- Invalid input → show validation message.
+- API failure → show fallback error message.
+- Check mobile view; ensure responsiveness.
+
+Implement this **exactly**, save all files, and when done, tell me “All files are created and ready.” Then I will test the site's full functionality.
+
+Let’s execute with precision—no ambiguity, no step left behind.
+

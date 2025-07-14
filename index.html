@@ -1,0 +1,367 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="main-content">
+    <!-- Search Tab Content -->
+    <div id="search-content" class="tab-content active">
+        <section class="search-container">
+            <h2>ابحث في القرآن الكريم</h2>
+        
+        <div class="search-input-container">
+            <input type="text" 
+                   id="searchInput" 
+                   placeholder="ابحث برقم السورة أو الآية أو النص أو اسم السورة..." 
+                   autocomplete="off"
+                   role="combobox"
+                   aria-expanded="false"
+                   aria-describedby="searchHelp">
+            
+            <div id="autocomplete-dropdown" class="autocomplete-dropdown hidden" role="listbox"></div>
+            
+            <button type="button" id="searchBtn" class="search-btn">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
+                </svg>
+                بحث
+            </button>
+        </div>
+        
+        <div id="searchHelp" class="search-help">
+            <p>يمكنك البحث بـ: رقم السورة والآية (مثل: 2:5) • اسم السورة (مثل: البقرة) • نص من الآية • كلمة من التفسير</p>
+        </div>
+        
+        <div id="validation-message" class="validation-message hidden"></div>
+    </section>
+
+    <!-- Loading Indicator -->
+    <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <p>جاري البحث...</p>
+    </div>
+
+    <!-- Search Results -->
+    <div id="search-results" class="search-results hidden">
+        <div id="results-header" class="results-header">
+            <h2>نتائج البحث</h2>
+            <span id="results-count" class="results-count"></span>
+        </div>
+        
+        <div id="results-container" class="results-container"></div>
+        
+        <!-- Pagination -->
+        <div id="pagination" class="pagination hidden">
+            <button id="prevBtn" class="page-btn" disabled>السابق</button>
+            <span id="pageInfo" class="page-info"></span>
+            <button id="nextBtn" class="page-btn" disabled>التالي</button>
+        </div>
+    </div>
+
+    <!-- No Results Message -->
+    <div id="no-results" class="no-results hidden">
+        <div class="no-results-icon">🔍</div>
+        <h3>عفواً، لم نعثر على أي نتائج</h3>
+        <p>حاول كلمات أو مرجع آخر</p>
+    </div>
+        </section>
+    </div>
+
+    <!-- Tafsir Tab Content -->
+    <div id="tafsir-content" class="tab-content">
+        <section class="content-section">
+            <h2>التفسير في القرآن الكريم</h2>
+            <div class="placeholder-content">
+                <div class="placeholder-icon">📖</div>
+                <h3>قريبًا...</h3>
+                <p>سيتم إضافة قسم التفسير المفصل للقرآن الكريم قريبًا بإذن الله</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Sciences Tab Content -->
+    <div id="sciences-content" class="tab-content">
+        <section class="content-section">
+            <h2>العلوم في القرآن الكريم</h2>
+            <div class="placeholder-content">
+                <div class="placeholder-icon">🔬</div>
+                <h3>قريبًا...</h3>
+                <p>سيتم إضافة قسم العلوم والمواضيع العلمية في القرآن الكريم قريبًا بإذن الله</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Mushafs Tab Content -->
+    <div id="mushafs-content" class="tab-content">
+        <section class="content-section">
+            <h2>المصاحف في القرآن الكريم</h2>
+            <div class="placeholder-content">
+                <div class="placeholder-icon">📚</div>
+                <h3>قريبًا...</h3>
+                <p>سيتم إضافة قسم المصاحف والقراءات المختلفة قريبًا بإذن الله</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Language Tab Content -->
+    <div id="language-content" class="tab-content">
+        <section class="content-section">
+            <h2>اللغة في القرآن الكريم</h2>
+            <div class="placeholder-content">
+                <div class="placeholder-icon">🔤</div>
+                <h3>قريبًا...</h3>
+                <p>سيتم إضافة قسم اللغة والجذور والنحو والصرف قريبًا بإذن الله</p>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+// Search functionality
+let searchTimeout;
+let currentQuery = '';
+let currentPage = 1;
+
+const searchInput = document.getElementById('searchInput');
+const searchBtn = document.getElementById('searchBtn');
+const autocompleteDropdown = document.getElementById('autocomplete-dropdown');
+const loading = document.getElementById('loading');
+const searchResults = document.getElementById('search-results');
+const resultsContainer = document.getElementById('results-container');
+const noResults = document.getElementById('no-results');
+const validationMessage = document.getElementById('validation-message');
+const pagination = document.getElementById('pagination');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const pageInfo = document.getElementById('pageInfo');
+const resultsCount = document.getElementById('results-count');
+
+// Debounced autocomplete
+searchInput.addEventListener('input', function() {
+    const query = this.value.trim();
+    
+    clearTimeout(searchTimeout);
+    
+    if (query.length < 2) {
+        hideAutocomplete();
+        return;
+    }
+    
+    searchTimeout = setTimeout(() => {
+        fetchAutocomplete(query);
+    }, 250);
+});
+
+// Search on Enter or button click
+searchInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        performSearch();
+    }
+});
+
+searchBtn.addEventListener('click', performSearch);
+
+// Handle autocomplete selection
+autocompleteDropdown.addEventListener('click', function(e) {
+    if (e.target.classList.contains('autocomplete-item')) {
+        const value = e.target.dataset.value;
+        searchInput.value = value;
+        hideAutocomplete();
+        performSearch();
+    }
+});
+
+// Close autocomplete when clicking outside
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.search-input-container')) {
+        hideAutocomplete();
+    }
+});
+
+// Pagination handlers
+prevBtn.addEventListener('click', () => {
+    if (currentPage > 1) {
+        currentPage--;
+        performSearch();
+    }
+});
+
+nextBtn.addEventListener('click', () => {
+    currentPage++;
+    performSearch();
+});
+
+function fetchAutocomplete(query) {
+    fetch(`/autocomplete?q=${encodeURIComponent(query)}`)
+        .then(response => response.json())
+        .then(suggestions => {
+            displayAutocomplete(suggestions);
+        })
+        .catch(error => {
+            console.error('Autocomplete error:', error);
+        });
+}
+
+function displayAutocomplete(suggestions) {
+    if (suggestions.length === 0) {
+        hideAutocomplete();
+        return;
+    }
+    
+    autocompleteDropdown.innerHTML = suggestions.map(item => `
+        <div class="autocomplete-item" data-value="${item.value}" role="option">
+            <span class="autocomplete-type">${item.type === 'reference' ? '🔗' : '📖'}</span>
+            ${item.text}
+        </div>
+    `).join('');
+    
+    autocompleteDropdown.classList.remove('hidden');
+    searchInput.setAttribute('aria-expanded', 'true');
+}
+
+function hideAutocomplete() {
+    autocompleteDropdown.classList.add('hidden');
+    searchInput.setAttribute('aria-expanded', 'false');
+}
+
+function performSearch() {
+    const query = searchInput.value.trim();
+    
+    if (!query) {
+        showValidationMessage('يرجى إدخال كلمة أو رقم للبحث');
+        return;
+    }
+    
+    // Validate reference format
+    const refMatch = query.match(/^(\d+):(\d+)$/);
+    if (refMatch) {
+        const sura = parseInt(refMatch[1]);
+        const aya = parseInt(refMatch[2]);
+        
+        if (sura < 1 || sura > 114) {
+            showValidationMessage('رقم السورة يجب أن يكون بين 1 و114');
+            return;
+        }
+        
+        if (aya < 1) {
+            showValidationMessage('رقم الآية يجب أن يكون أكبر من 0');
+            return;
+        }
+    }
+    
+    currentQuery = query;
+    hideAutocomplete();
+    hideValidationMessage();
+    showLoading();
+    
+    fetch(`/search?q=${encodeURIComponent(query)}&page=${currentPage}`)
+        .then(response => response.json())
+        .then(data => {
+            hideLoading();
+            displayResults(data);
+        })
+        .catch(error => {
+            console.error('Search error:', error);
+            hideLoading();
+            showValidationMessage('حدث خطأ في البحث، يرجى المحاولة لاحقاً');
+        });
+}
+
+function displayResults(data) {
+    if (data.total === 0) {
+        showNoResults();
+        return;
+    }
+    
+    // Update results count
+    resultsCount.textContent = `${data.total} نتيجة`;
+    
+    // Display results
+    resultsContainer.innerHTML = data.results.map(result => `
+        <div class="result-card">
+            <div class="result-header">
+                <h3>${result.sura_name_ar} - ${result.sura_name_en}</h3>
+                <span class="verse-number">الآية ${result.aya}</span>
+            </div>
+            
+            <div class="verse-text">
+                <p class="arabic-text">${highlightText(result.text, currentQuery)}</p>
+            </div>
+            
+            <div class="result-actions">
+                <a href="/surah/${result.sura}" class="view-surah-link">عرض السورة كاملة</a>
+                <span class="reference-badge">${result.sura}:${result.aya}</span>
+            </div>
+        </div>
+    `).join('');
+    
+    // Update pagination
+    updatePagination(data);
+    
+    // Show results
+    searchResults.classList.remove('hidden');
+    noResults.classList.add('hidden');
+}
+
+function highlightText(text, query) {
+    if (!text || !query) return text;
+    
+    const regex = new RegExp(`(${escapeRegExp(query)})`, 'gi');
+    return text.replace(regex, '<mark>$1</mark>');
+}
+
+function truncateText(text, maxLength) {
+    if (!text || text.length <= maxLength) return text;
+    
+    const truncated = text.substring(0, maxLength);
+    const lastSpace = truncated.lastIndexOf(' ');
+    
+    return (lastSpace > 0 ? truncated.substring(0, lastSpace) : truncated) + '...';
+}
+
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function updatePagination(data) {
+    if (data.total <= 25) {
+        pagination.classList.add('hidden');
+        return;
+    }
+    
+    prevBtn.disabled = !data.has_prev;
+    nextBtn.disabled = !data.has_next;
+    
+    pageInfo.textContent = `صفحة ${data.page}`;
+    
+    pagination.classList.remove('hidden');
+}
+
+function showLoading() {
+    loading.classList.remove('hidden');
+    searchResults.classList.add('hidden');
+    noResults.classList.add('hidden');
+}
+
+function hideLoading() {
+    loading.classList.add('hidden');
+}
+
+function showNoResults() {
+    noResults.classList.remove('hidden');
+    searchResults.classList.add('hidden');
+}
+
+function showValidationMessage(message) {
+    validationMessage.textContent = message;
+    validationMessage.classList.remove('hidden');
+}
+
+function hideValidationMessage() {
+    validationMessage.classList.add('hidden');
+}
+
+// Focus search input on page load
+window.addEventListener('DOMContentLoaded', function() {
+    searchInput.focus();
+});
+</script>
+{% endblock %}

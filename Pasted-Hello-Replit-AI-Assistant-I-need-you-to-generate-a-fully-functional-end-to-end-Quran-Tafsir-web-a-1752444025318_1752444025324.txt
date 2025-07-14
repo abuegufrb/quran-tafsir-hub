@@ -1,0 +1,196 @@
+Hello Replit AI Assistant,
+
+I need you to generate a fully functional, end-to-end Quran Tafsir web application using Python and Flask, with a clean, modern, responsive front-end inspired by ketabonline.com. This project must be delivered with zero ambiguity and follow these detailed specifications from A to Z:
+
+
+---
+
+1. Project Structure & Technology Stack
+
+Language & Framework: Python 3.x with Flask as the web framework.
+
+HTTP Requests: Use the requests library to call the external Quran.com API v4.
+
+Templating Engine: Jinja2, the default Flask engine.
+
+Static Assets: CSS only—no external CSS frameworks (e.g., Bootstrap)—to keep the design lightweight.
+
+Fonts: Load the “Cairo” font from Google Fonts for all Arabic text.
+
+Version Control: Ensure that .replit and requirements.txt are properly set up for easy deployment and reproducibility.
+
+
+Folder layout must be exactly:
+
+/ (root)
+│
+├── .replit # default Replit runtime config
+├── requirements.txt # list flask, requests
+├── main.py # Flask application entrypoint
+├── templates/
+│ ├── layout.html # base HTML layout with head, nav, footer
+│ └── index.html # homepage that extends layout.html
+└── static/
+    └── style.css # all custom styles
+
+
+---
+
+2. requirements.txt
+
+Flask>=2.0
+requests>=2.25
+
+
+---
+
+3. main.py
+
+Import Flask, render_template, request from flask and requests library.
+
+Configure the Flask app with app = Flask(__name__).
+
+Define a single route for / that accepts both GET and POST methods.
+
+On GET requests, render index.html with empty context.
+
+On POST requests:
+
+1. Read form fields sura and aya (validated as integers between 1–114 for sura, positive for aya).
+
+
+2. Build a request URL to https://api.quran.com/api/v4/verses/by_key/{sura}:{aya}?language=ar&tafsir_translations=131
+
+
+3. Perform the HTTP GET and parse JSON.
+
+
+4. Extract the tafsir text under response.json()['verse']['tafsir']['text'].
+
+
+5. Pass the resulting Arabic text back into the template context under the variable tafsir.
+
+
+
+Always handle network or parsing errors gracefully: if the API call fails, set tafsir to an error message like “عذراً، فشل جلب التفسير. يرجى المحاولة لاحقاً.”
+
+Run the server with app.run(host='0.0.0.0', port=8080, debug=True).
+
+
+
+---
+
+4. templates/layout.html
+
+A complete HTML5 document with:
+
+<html lang="ar" dir="rtl">
+
+<head> containing <meta charset="UTF-8">, <meta name="viewport" content="width=device-width, initial-scale=1">, and <link> tags for Google Fonts and static/style.css.
+
+A <nav> bar at the top with a container that includes a site logo “تفسير القرآن” linking to /, and two nav links: “الرئيسية” and “عن الموقع”.
+
+A Jinja2 {% block content %}{% endblock %} inside a <main class="container"> for page-specific content.
+
+A <footer> fixed at the bottom with “© 2025 تفسير القرآن”.
+
+
+
+
+---
+
+5. templates/index.html
+
+Must extend layout.html with {% extends "layout.html" %} and define a {% block content %}.
+
+Display a centered section with:
+
+A heading <h1>ابحث عن تفسير الآية</h1>.
+
+A <form method="POST" class="search-form"> containing two <input> fields (type=number) for “رقم السورة” and “رقم الآية”, each with placeholders and required attributes, and a <button type="submit">عرض التفسير</button>.
+
+
+If tafsir exists, display inside a <div class="result-card">:
+
+<h2>التفسير للسورة {{ sura }} الآية {{ aya }}</h2>
+
+<p>{{ tafsir }}</p>
+
+
+Ensure all text is right-aligned, Arabic-friendly, and uses the Cairo font.
+
+
+
+---
+
+6. static/style.css
+
+Define base styles:
+
+body background color #f5f5f5, margin/padding reset, font-family 'Cairo', sans-serif.
+
+.container max-width 800px, centered horizontally.
+
+.navbar white background, subtle box shadow, horizontal padding, flex layout.
+
+.logo font-size 1.5rem, color #333, no text decoration.
+
+.nav-links list-style none, horizontal spacing, link color #555, hover color #007BFF.
+
+.search-form input and button styled with padding 10px, margin, border radius 4px.
+
+.search-form button background #007BFF, color white, pointer cursor, hover state background: #0056b3.
+
+.result-card white background, 20px padding, border radius 8px, box shadow, top margin 20px.
+
+Ensure responsive: on viewports under 600px, inputs stack vertically at 100% width, reduce padding.
+
+
+
+
+---
+
+7. SEO & Google Suggestions
+
+In <head> of layout.html, include JSON-LD structured data for WebSite with a SearchAction:
+
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "url": "https://your-domain.com/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://your-domain.com/?sura={sura}&aya={aya}",
+    "query-input": "required name=sura, required name=aya"
+  }
+}
+
+Add <meta name="description" content="ابحث عن تفسير القرآن الكريم بسهولة."> for better preview.
+
+
+
+---
+
+8. Deployment & Testing
+
+After coding, install flask and requests via the Replit Packages UI.
+
+Click Run, then open the Webview pane.
+
+Test three scenarios:
+
+1. Valid inputs, e.g. sura=1, aya=1 → should show correct tafsir text.
+
+
+2. Invalid inputs, e.g. sura=200 → should show a validation error message.
+
+
+3. Simulate API failure (e.g. disconnect internet) → should show the graceful error message.
+
+
+
+
+
+---
+
+Please implement this entire project exactly as specified, with no deviations, so that the final product is a professional, SEO-friendly, responsive Quran Tafsir web application ready for users and Google search suggestions.

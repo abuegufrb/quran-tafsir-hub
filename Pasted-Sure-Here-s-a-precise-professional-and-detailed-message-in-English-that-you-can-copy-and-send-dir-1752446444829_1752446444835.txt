@@ -1,0 +1,132 @@
+Sure! Here's a precise, professional, and detailed message in English that you can copy and send directly to the AI inside your Replit project. This message will tell it exactly what to do — including uploading the data for Surah Al-Fatiha and preparing the backend to process it:
+
+
+---
+
+📩 Message to Replit AI (English):
+
+
+---
+
+Hello, I need your help to complete and enhance the QuranTafsirHub project.
+
+Project Goal:
+
+Build a complete Quran search interface starting with Surah Al-Fatiha, including both Quranic text and Tafsir (interpretation). The goal is to allow users to search easily by verse number, Surah name, or any keyword — and retrieve accurate results with matched verses and related Tafsir.
+
+
+---
+
+Step 1: Add Quran Data File
+
+Create a new file named verses_db.json and insert the following content. This file will contain Surah Al-Fatiha, with each verse and its corresponding simple Tafsir in JSON format:
+
+[
+  {
+    "surah": 1,
+    "ayah": 1,
+    "text": "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
+    "tafsir": "This verse opens the Surah by declaring the name of Allah, the Most Merciful, the Most Compassionate."
+  },
+  {
+    "surah": 1,
+    "ayah": 2,
+    "text": "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
+    "tafsir": "All praise is for Allah, the Lord and Sustainer of all worlds and creatures."
+  },
+  {
+    "surah": 1,
+    "ayah": 3,
+    "text": "الرَّحْمَٰنِ الرَّحِيمِ",
+    "tafsir": "A repetition of Allah’s attributes of mercy — the most general and the most specific forms of mercy."
+  },
+  {
+    "surah": 1,
+    "ayah": 4,
+    "text": "مَالِكِ يَوْمِ الدِّينِ",
+    "tafsir": "He is the Sovereign of the Day of Judgment — the day of final accountability."
+  },
+  {
+    "surah": 1,
+    "ayah": 5,
+    "text": "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
+    "tafsir": "We worship You alone, and seek help only from You — total submission and reliance."
+  },
+  {
+    "surah": 1,
+    "ayah": 6,
+    "text": "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ",
+    "tafsir": "We ask You to guide us to the Straight Path — the path of righteousness."
+  },
+  {
+    "surah": 1,
+    "ayah": 7,
+    "text": "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ",
+    "tafsir": "The path of those who received Your grace — not of those who earned anger, nor those who went astray."
+  }
+]
+
+
+---
+
+Step 2: Load the File in Python
+
+Inside main.py, make sure to load this file using the following code:
+
+import json
+
+with open("verses_db.json", "r", encoding="utf-8") as f:
+    verses_db = json.load(f)
+
+You will use verses_db to perform search operations across Surah and verse data.
+
+
+---
+
+Step 3: Search Function Behavior
+
+Please ensure the search system:
+
+Accepts input like “Al-Fatiha”, “1:5”, or any Arabic keyword.
+
+Matches across:
+
+Surah names
+
+Verse numbers
+
+Full or partial text matches in either the Quranic verse or its Tafsir.
+
+
+Displays results ranked by relevance.
+
+
+Each result should include:
+
+Surah name and verse number
+
+The Quran verse
+
+Its Tafsir (interpretation)
+
+
+Highlight the matched keywords in the results, and display them in clean cards or containers for a professional look.
+
+
+---
+
+Step 4: Final Notes
+
+Make sure the search input supports Arabic text input.
+
+The file should be loaded only once during server start.
+
+The app should display a message like “No results found” when no match is found.
+
+
+Let me know when it's done so I can test it and proceed to upload additional Surahs and Tafsir data.
+
+Thank you!
+
+
+---
